@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue training</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+  </head>
+
+  <body>
+    <div id="app">
+      <!--App header-->
+      <app-header></app-header>
+
+      <div class="container container-fluid">
+        <!--Login container-->
+        <h1>Login</h1>
+        <app-login v-bind:user="user" v-on:log-in="logIn"></app-login>
+        <p v-if="loggedIn" class="mt-3">Hi, you are logged in as {{ user }}</p>
+
+        <div v-if="loggedIn">
+        
+          <!--Products-->
+          <h1>Available products</h1>
+          <div class="row mt-3">
+            <app-product v-for="product in products" v-bind:name="product" v-on:product-added="addProduct">
+              </product-card>
+          </div>
+          
+          <!--Order-->
+          <h1 v-if="orders.length > 0">Commande</h1>
+          <div class="row mt-3" v-if="orders.length > 0">
+            <ul>
+              <app-order v-for="order in orders" v-bind:name="order"></app-order>
+            </ul>
+            <product-card v-for="order in orders" v-bind:name="order"></product-card>
+          </div>
+          
+          </div>
+
+
+        <!--Order-->
+        
+      </div>
+    </div>
+
+    <script>
+      Vue.component("app-header", {
+        template: `
+          <header>
+              <nav class="navbar navbar-light bg-light">
+                <a class="navbar-brand" href="#">Vue training</a>
+              </nav>
+          </header>`
+      });
+
+      Vue.component("app-login", {
+        template: `
+        <div class="row mt-3">
+          <div class="col-12">
+            <p>Username : <input type="text" v-model="user"></p>
+            <button v-on:click="login(user)" class="btn btn-primary">Login</button>
+          </div>
+        </div>`,
+        props: ["user"],
+        methods: {
+          login: function(user) {
+            this.$emit("log-in", user);
+          }
+        }
+      });
+
+      Vue.component("app-product", {
+        template: `
+          <div class="col-3">
+            <div class="jumbotron">
+              <p>{{name}}</p>
+              <button v-on:click="order(name)">Commander</button>
+            </div>
+          </div>
+        `,
+        props: ["name"],
+        methods: {
+          order: function(product) {
+            this.$emit("product-added", product);
+          }
+        }
+      });
+
+      Vue.component("app-order", {
+        template: "<li>{{name}}</li>",
+        props: ["name"]
+      })
+
+      let app = new Vue({
+        el: "#app",
+        data: {
+          user: "User",
+          loggedIn: false,
+          products: ["Pizza", "Hamburger", "Cheeseburger", "Tacos"],
+          orders: []
+        },
+        methods: {
+          addProduct: function(product) {
+            this.orders.push(product);
+          },
+          logIn: function(user) {
+            if (user) {
+              this.loggedIn = true;
+            } else {
+              this.loggedIn = false;
+            }
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
